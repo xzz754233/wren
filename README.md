@@ -28,32 +28,66 @@ Built with **LangGraph**, **LangChain**, and **Kimi K2 Thinking models**.
 WREN uses a **specialized multi-agent architecture** with distinct roles:
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                        CLI Interface                        │
-└─────────────────────────┬───────────────────────────────────┘
-                          │
-            ┌─────────────┴─────────────┐
-            │                           │
-  ┌─────────▼──────────┐    ┌──────────▼──────────┐
-  │ InterviewAgent     │    │ ProfileGenerator    │
-  │ (kimi-k2-thinking- │    │ (kimi-k2-thinking)  │
-  │      turbo)        │    │                     │
-  │ - Ask questions    │    │ - Deep analysis     │
-  │ - Adapt to style   │    │ - Generate profile  │
-  │ - Track coverage   │    │ - Extract reasoning │
-  └─────────┬──────────┘    └──────────┬──────────┘
-            │                           │
-  ┌─────────▼───────────────────────────▼──────────┐
-  │          LangGraph StateGraph                   │
-  │   ┌─────────────────────────────────────┐      │
-  │   │  analyze → generate → save          │      │
-  │   └─────────────────────────────────────┘      │
-  └─────────┬────────────────────────────────────────┘
-            │
-  ┌─────────▼──────────┐
-  │ RedisCheckpointSaver│
-  │  (State Persistence)│
-  └─────────────────────┘
+┌────────────────────────────────────────────────────────────────────┐
+│                          CLI Interface                             │
+│                       (cli_interview.py)                           │
+└────────────────────┬───────────────────────────────────────────────┘
+                     │
+       ┌─────────────┴──────────────┐
+       │                            │
+┌──────▼─────────────────┐   ┌──────▼──────────────────────┐
+│   InterviewAgent       │   │   ProfileGeneratorAgent     │
+│ (kimi-k2-thinking-     │   │   (kimi-k2-thinking)        │
+│       turbo)           │   │                             │
+│                        │   │ Tools:                      │
+│ Tools:                 │   │ ┌─────────────────────────┐ │
+│ ┌────────────────────┐ │   │ │ ReasoningExtractor      │ │
+│ │ ProfileAnalyzer    │ │   │ │ - Extract thinking      │ │
+│ │ - Vocab richness   │ │   │ │ - Format reasoning      │ │
+│ │ - Response brevity │ │   │ └─────────────────────────┘ │
+│ │ - Engagement level │ │   │                             │
+│ └────────────────────┘ │   │ ┌─────────────────────────┐ │
+│                        │   │ │ ProfileFormatter        │ │
+│ ┌────────────────────┐ │   │ │ - JSON → Markdown       │ │
+│ │ConversationAnalyzer│ │   │ │ - Shareable text        │ │
+│ │ - Turn tracking    │ │   │ │ - Human-readable        │ │
+│ │ - Coverage check   │ │   │ └─────────────────────────┘ │
+│ │ - Readiness score  │ │   │                             │
+│ └────────────────────┘ │   │ ┌─────────────────────────┐ │
+└────────┬───────────────┘   │ │ ProfileSaver            │ │
+         │                   │ │ - Create user folders   │ │
+         │                   │ │ - Save logs + profiles  │ │
+         │                   │ │ - Multiple formats      │ │
+         │                   │ └─────────────────────────┘ │
+         │                   └──────┬──────────────────────┘
+         │                          │
+┌────────▼──────────────────────────▼─────────────────────────┐
+│                   LangGraph StateGraph                      │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │                                                      │   │
+│  │  [analyze_node]                                     │   │
+│  │      ↓                                              │   │
+│  │  Run ProfileAnalyzer + ConversationAnalyzer         │   │
+│  │      ↓                                              │   │
+│  │  [_should_continue]                                 │   │
+│  │      ↓                    ↓                         │   │
+│  │  turn < 12           turn >= 12                     │   │
+│  │      ↓                    ↓                         │   │
+│  │  [generate_question]  [generate_profile]            │   │
+│  │                                                      │   │
+│  └──────────────────────────────────────────────────────┘   │
+│                                                              │
+│  State: {messages, turn_count, analysis, profile_data}      │
+└────────┬─────────────────────────────────────────────────────┘
+         │
+┌────────▼──────────────┐
+│ RedisCheckpointSaver  │
+│ (State Persistence)   │
+│                       │
+│ - Pickle serialization│
+│ - 24h TTL             │
+│ - Resume sessions     │
+└───────────────────────┘
 ```
 
 ### Agent 1: InterviewAgent
