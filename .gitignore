@@ -52,7 +52,10 @@ Thumbs.db
 # Project specific
 redis-data/
 postgres-data/
-user_profiles/*
-!user_profiles/example_session/
-docs/
+user_profiles/
+
+# Exclude planning docs
+docs/inspo.md
+docs/prd_wren_mvp.md
+docs/whoiswren.md
 

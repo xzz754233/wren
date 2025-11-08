@@ -460,7 +460,7 @@ Claude/GPT/Grok/Kimi, write a short story for me using these preferences:
 
 ```
 readwren/
-├── src/
+├── src/                     # Core application
 │   ├── agents/              # AI agents
 │   │   ├── interview_agent.py       # Main interviewer (LangGraph)
 │   │   ├── profile_generator.py     # Profile analyst
@@ -474,15 +474,27 @@ readwren/
 │   │   └── interview_prompts.py     # System prompts + rubric loader
 │   └── config/              # Configuration
 │       └── settings.py
-├── cli_interview.py         # Interactive CLI
+├── docs/                    # Documentation
+│   ├── TECHNICAL_DOCUMENTATION.md   # Complete technical reference
+│   ├── PROFILE_RUBRIC.md            # Scoring system (loaded dynamically)
+│   ├── RUBRIC_INTEGRATION.md        # Rubric usage guide
+│   └── REDIS_GUIDE.md               # Redis setup and usage
+├── scripts/                 # Utility scripts
+│   ├── view_redis_sessions.py       # List active sessions
+│   ├── view_session_conversation.py # Decode Redis checkpoints
+│   ├── view_conversation_log.py     # Display conversation logs
+│   └── retrieve_profile.py          # Retrieve and edit profiles
+├── examples/                # Example outputs
+│   └── example_session/             # Complete mock interview
+│       ├── logs/                    # Conversation transcript
+│       └── profiles/                # Generated profiles
+├── cli_interview.py         # Interactive CLI entry point
+├── run_interview.sh         # Startup script
 ├── requirements.txt         # Python dependencies
 ├── env.example              # Environment template
-├── run_interview.sh         # Startup script
-├── PROFILE_RUBRIC.md        # Scoring system (loaded dynamically)
-├── TECHNICAL_DOCUMENTATION.md  # Complete technical docs
-├── RUBRIC_INTEGRATION.md    # Rubric usage guide
-├── REDIS_GUIDE.md           # Redis setup and usage
-└── user_profiles/           # Generated outputs (gitignored)
+├── LICENSE                  # MIT License
+├── README.md                # This file
+└── user_profiles/           # Your generated outputs (gitignored)
 ```
 
 ---
@@ -536,13 +548,13 @@ state = {
 
 ```bash
 # View all active Redis sessions
-python view_redis_sessions.py
+python scripts/view_redis_sessions.py
 
 # View specific conversation
-python view_conversation_log.py user_profiles/cli_20251108_145739/logs/conversation.json
+python scripts/view_conversation_log.py user_profiles/cli_20251108_145739/logs/conversation.json
 
 # Retrieve session from Redis
-python retrieve_profile.py
+python scripts/retrieve_profile.py
 ```
 
 ### Kimi K2 Reasoning
@@ -571,19 +583,19 @@ Edit `PROFILE_RUBRIC.md` to adjust scoring scales. Changes automatically propaga
 
 ## Documentation
 
-- **[TECHNICAL_DOCUMENTATION.md](TECHNICAL_DOCUMENTATION.md)**: Complete architecture, agents, tools, prompts, data flow
-- **[PROFILE_RUBRIC.md](PROFILE_RUBRIC.md)**: Scoring system and metric definitions
-- **[RUBRIC_INTEGRATION.md](RUBRIC_INTEGRATION.md)**: How rubric is used in code
-- **[REDIS_GUIDE.md](REDIS_GUIDE.md)**: Redis setup and session management
+- **[TECHNICAL_DOCUMENTATION.md](docs/TECHNICAL_DOCUMENTATION.md)**: Complete architecture, agents, tools, prompts, data flow
+- **[PROFILE_RUBRIC.md](docs/PROFILE_RUBRIC.md)**: Scoring system and metric definitions
+- **[RUBRIC_INTEGRATION.md](docs/RUBRIC_INTEGRATION.md)**: How rubric is used in code
+- **[REDIS_GUIDE.md](docs/REDIS_GUIDE.md)**: Redis setup and session management
 
 ---
 
 ## Utilities
 
-- `view_redis_sessions.py`: List all active sessions with metadata
-- `view_session_conversation.py`: Decode Redis checkpoint for a session
-- `view_conversation_log.py`: Display saved conversation logs
-- `retrieve_profile.py`: Retrieve and manually edit profiles
+- `scripts/view_redis_sessions.py`: List all active sessions with metadata
+- `scripts/view_session_conversation.py`: Decode Redis checkpoint for a session
+- `scripts/view_conversation_log.py`: Display saved conversation logs
+- `scripts/retrieve_profile.py`: Retrieve and manually edit profiles
 
 ---
 
