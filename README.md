@@ -668,7 +668,7 @@ Open Source - MIT License
 
 - **Twitter**: [@koylanai](https://twitter.com/koylanai)
 - **GitHub Issues**: [readwren/issues](https://github.com/muratcankoylan/readwren/issues)
-- **Documentation**: See [TECHNICAL_DOCUMENTATION.md](TECHNICAL_DOCUMENTATION.md)
+- **Documentation**: See [TECHNICAL_DOCUMENTATION.md]([TECHNICAL_DOCUMENTATION.md](https://github.com/muratcankoylan/readwren/blob/main/docs/TECHNICAL_DOCUMENTATION.md))
 
 ---
 
