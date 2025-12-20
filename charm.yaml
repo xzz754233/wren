@@ -1,0 +1,107 @@
+# ==================================================================
+# Charm Agent Manifest for WREN
+# ==================================================================
+
+version: "0.4.1"
+
+# ------------------------------------------------------------------
+# 1. Identity & Store Metadata
+# ------------------------------------------------------------------
+persona:
+  name: "WREN: Literary Profiler"
+  version: "0.1.3"
+  authors: ["Charm Team"]
+  tags: ["writing", "interview", "personalization"]
+  license: "MIT"
+
+  # Short description for the card view (Max 100 chars).
+  # Focus: Input (Interview) -> Value (Literary DNA).
+  description: "Conducts adaptive interviews to extract your literary DNA and generate actionable reading profiles."
+
+  # Full description for the detail page.
+  # Focus: Problem -> Solution -> How to use -> Deliverable.
+  full_description: |
+    # Stop struggling to describe your taste to AI.
+    
+    WREN is not a standard chatbot; it is a **professional literary profiler**. Most users fail to get good recommendations or creative writing from AI because they cannot articulate their specific stylistic preferences. WREN solves this by interviewing you first.
+
+    ## Capabilities
+    - **Adaptive Interviewing**: Conducts a 12-turn dynamic Q&A to dig beneath surface-level preferences.
+    - **Style Quantification**: Analyzes your implicit signals to score you on Prose Density, Pacing, and Tone (0-100 scale).
+    - **Universal Profile**: Generates a structured "User Manual" of your taste.
+
+    ## How to Use
+    1. **Start the Chat**: WREN will ask you about books you love and hate.
+    2. **Be Honest**: Answer naturally. The agent analyzes your word choice and sentence structure.
+    3. **Get Your Profile**: At the end, you receive a structured analysis of your literary DNA.
+
+    ## What You Get (The Deliverable)
+    You will receive a **JSON and Markdown profile**. You can copy-paste this profile into ChatGPT, Claude, or Gemini with the command: 
+    > "Write a story for me based on the style metrics in this WREN profile."
+
+  assets:
+    icon: "https://raw.githubusercontent.com/xzz754233/wren/main/icon.png"
+    banner: "https://raw.githubusercontent.com/xzz754233/wren/main/banner.png"
+
+pricing:
+  type: "free"
+
+goals:
+  - "Extract user literary taste anchors through conversation"
+  - "Quantify writing style preferences (density, pacing, tone)"
+  - "Generate machine-readable prompts for other AI agents"
+
+# ------------------------------------------------------------------
+# 2. Interface (UI Generation)
+# ------------------------------------------------------------------
+interface:
+  input:
+    type: "object"
+    properties:
+      user_name:
+        type: "string"
+        title: "Your Name"
+        description: "How should the interviewer address you?"
+        default: "Reader"
+      
+      initial_context:
+        type: "string"
+        title: "Initial Context (Optional)"
+        description: "Any specific genre, author, or topic you want to focus on?"
+        x-ui-widget: "textarea"
+
+  output:
+    type: "object"
+    description: "Returns a structured JSON object containing the user's literary profile, style metrics, and interview transcript."
+
+  state:
+    format: "json"
+    schema:
+      type: "object"
+      description: "Persists the conversation history, current turn count, and real-time analysis metrics."
+
+# ------------------------------------------------------------------
+# 3. Runtime (Execution Logic)
+# ------------------------------------------------------------------
+runtime:
+  adapter:
+    type: "langgraph"
+    
+    # Points to the compiled graph object in your Python code
+    entry_point: "src.agents.interview_agent:agent_app"
+    
+    environment_variables:
+      - "MOONSHOT_API_KEY"
+      - "REDIS_HOST"
+      - "REDIS_PORT"
+      - "REDIS_PASSWORD"
+
+  injections:
+    memory_store: true
+
+# ------------------------------------------------------------------
+# 4. Governance
+# ------------------------------------------------------------------
+policies:
+  allow_internet_access: false
+  max_steps: 50
