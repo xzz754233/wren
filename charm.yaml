@@ -88,7 +88,7 @@ runtime:
     type: "langgraph"
     
     # Points to the compiled graph object in your Python code
-    entry_point: "src.agents.interview_agent:agent_app"
+    entry_point: "src.agents.interview_agent:InterviewAgent"
     
     environment_variables:
       - "MOONSHOT_API_KEY"
