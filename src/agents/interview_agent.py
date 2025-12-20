@@ -35,6 +35,11 @@ class InterviewAgent:
             use_redis: If True, use Redis for persistent checkpointing. 
                       If False, use in-memory checkpointing (development only).
         """
+        print(f"DEBUG: Checking Auth...")
+        print(f"DEBUG: Base URL: {settings.moonshot_base_url}")
+        masked_key = settings.moonshot_api_key[:8] + "..." if settings.moonshot_api_key else "None"
+        print(f"DEBUG: API Key: {masked_key}")
+        
         settings.validate()
 
         # Initialize regular Kimi K2 model for interviewing (faster, no thinking overhead)
