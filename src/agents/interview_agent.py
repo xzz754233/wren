@@ -3,6 +3,7 @@ import os
 import redis
 from typing import TypedDict, Annotated, List, Dict, Any, Optional
 from operator import add
+from src.utils.llm_factory import get_llm
 
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage
 from langchain_openai import ChatOpenAI
@@ -41,6 +42,8 @@ class InterviewAgent:
         print(f"DEBUG: API Key: {masked_key}")
         
         settings.validate()
+
+        self.llm = get_llm(mode="interview")
 
         # Initialize regular Kimi K2 model for interviewing (faster, no thinking overhead)
         self.llm = ChatOpenAI(
@@ -321,3 +324,9 @@ class InterviewAgent:
             "is_complete": current_state.values.get("is_complete", False),
         }
 
+try:
+    _agent_instance = InterviewAgent(use_redis=True)
+    graph_app = _agent_instance.app
+except Exception as e:
+    print(f"Warning: Could not initialize graph_app for export: {e}")
+    graph_app = None

@@ -4,6 +4,7 @@ import json
 from typing import Dict, Any, List
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage
+from src.utils.llm_factory import get_llm
 
 from src.config.settings import settings
 from src.prompts.interview_prompts import InterviewPrompts
@@ -15,6 +16,8 @@ class ProfileGeneratorAgent:
     def __init__(self):
         """Initialize the profile generator with optimized settings for analysis."""
         settings.validate()
+
+        self.llm = get_llm(mode="profile")
         
         # Use Kimi K2 THINKING model for deep profile analysis
         self.llm = ChatOpenAI(

@@ -10,9 +10,11 @@ class Settings:
 
     def __init__(self):
         self.moonshot_api_key: str = os.getenv("MOONSHOT_API_KEY", "")
-        self.moonshot_base_url: str = os.getenv(
-            "MOONSHOT_BASE_URL", "https://api.moonshot.cn/v1"
-        )
+        self.moonshot_base_url: str = os.getenv("MOONSHOT_BASE_URL", "https://api.moonshot.cn/v1")
+        self.openai_api_key: Optional[str] = os.getenv("OPENAI_API_KEY")
+        self.openai_model: str = os.getenv("OPENAI_MODEL", "o3-mini")
+        self.google_api_key: Optional[str] = os.getenv("GOOGLE_API_KEY")
+        self.google_model: str = os.getenv("GOOGLE_MODEL", "gemini-2.5-flash") 
         self.redis_host: str = os.getenv("REDIS_HOST", "localhost")
         self.redis_port: int = int(os.getenv("REDIS_PORT", "6379"))
         self.redis_password: Optional[str] = os.getenv("REDIS_PASSWORD", None)
