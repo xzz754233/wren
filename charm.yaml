@@ -10,7 +10,7 @@ version: "0.4.1"
 persona:
   name: "WREN: Literary Profiler"
   # 版本號建議升級，代表這版支援了多模型架構
-  version: "0.2.0"
+  version: "0.2.1"
   authors: ["Charm Team"]
   tags: ["writing", "interview", "personalization", "literature"]
   license: "MIT"
@@ -94,20 +94,6 @@ runtime:
     environment_variables:
       # Kimi / Moonshot
       - "MOONSHOT_API_KEY"
-      - "MOONSHOT_BASE_URL"
-      
-      # OpenAI (o1/o3-mini)
-      - "OPENAI_API_KEY"
-      - "OPENAI_MODEL"
-      
-      # Google Gemini
-      - "GOOGLE_API_KEY"
-      - "GOOGLE_MODEL"
-      
-      # Redis (State Persistence)
-      - "REDIS_HOST"
-      - "REDIS_PORT"
-      - "REDIS_PASSWORD"
 
   injections:
     memory_store: true
