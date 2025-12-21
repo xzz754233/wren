@@ -27,32 +27,18 @@ class InterviewState(TypedDict):
 
 
 class InterviewAgent:
-    """Literary interview agent using LangGraph and Kimi K2 Thinking model."""
+    """Literary interview agent using LangGraph and Multi-Model support."""
 
     def __init__(self, use_redis: bool = True):
-        """Initialize the interview agent with Kimi K2 model.
+        """Initialize the interview agent with dynamic LLM provider.
         
         Args:
             use_redis: If True, use Redis for persistent checkpointing. 
                       If False, use in-memory checkpointing (development only).
         """
-        print(f"DEBUG: Checking Auth...")
-        print(f"DEBUG: Base URL: {settings.moonshot_base_url}")
-        masked_key = settings.moonshot_api_key[:8] + "..." if settings.moonshot_api_key else "None"
-        print(f"DEBUG: API Key: {masked_key}")
-        
         settings.validate()
 
         self.llm = get_llm(mode="interview")
-
-        # Initialize regular Kimi K2 model for interviewing (faster, no thinking overhead)
-        self.llm = ChatOpenAI(
-            model="kimi-k2-thinking-turbo",  # Regular Kimi model for conversational questions
-            api_key=settings.moonshot_api_key,
-            base_url=settings.moonshot_base_url,
-            temperature=0.8,
-            max_tokens=800,  # Standard tokens for interview questions
-        )
 
         # Initialize tools
         self.profile_analyzer = ProfileAnalyzerTool()

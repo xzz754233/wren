@@ -16,19 +16,10 @@ class ProfileGeneratorAgent:
     def __init__(self):
         """Initialize the profile generator with optimized settings for analysis."""
         settings.validate()
-
+        
         self.llm = get_llm(mode="profile")
         
-        # Use Kimi K2 THINKING model for deep profile analysis
-        self.llm = ChatOpenAI(
-            model="kimi-k2-thinking",  # Thinking model with extended reasoning for profiles
-            api_key=settings.moonshot_api_key,
-            base_url=settings.moonshot_base_url,
-            temperature=0.7,
-            max_tokens=4000,  # Higher limit for comprehensive profiles + reasoning
-        )
-        
-        print("✓ ProfileGeneratorAgent loaded")
+        print(f"✓ ProfileGeneratorAgent loaded using {type(self.llm).__name__}")
     
     def generate_profile(
         self,
