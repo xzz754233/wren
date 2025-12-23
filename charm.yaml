@@ -9,7 +9,7 @@ version: "0.4.1"
 # ------------------------------------------------------------------
 persona:
   name: "WREN: Literary Profiler"
-  version: "0.2.2"
+  version: "0.2.3"
   authors: ["Charm Team"]
   tags: ["writing", "interview", "personalization", "literature"]
   license: "MIT"
@@ -84,14 +84,9 @@ runtime:
   adapter:
     type: "langgraph"
     
-    # [關鍵修改] 指向編譯好的 Graph 物件，而不是類別
-    # 請確保 Python 程式碼中有對應導出此變數 (見下方程式碼說明)
     entry_point: "src.agents.interview_agent:graph_app"
     
-    # [關鍵修改] 加入所有支援模型的環境變數
-    # 這樣使用者在 Charm 平台設定這些 Key 時，Agent 才能讀取到
     environment_variables:
-      # Kimi / Moonshot
       - "MOONSHOT_API_KEY"
 
   injections:
