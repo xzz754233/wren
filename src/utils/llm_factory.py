@@ -1,7 +1,7 @@
 from typing import Literal
 from langchain_core.language_models import BaseChatModel
 from langchain_openai import ChatOpenAI
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI, HarmBlockThreshold, HarmCategory
 from src.config import settings
 
 def get_llm(mode: Literal["interview", "profile"] = "interview") -> BaseChatModel:
@@ -18,11 +18,24 @@ def get_llm(mode: Literal["interview", "profile"] = "interview") -> BaseChatMode
     if provider == "gemini":
         if not settings.google_api_key:
             raise ValueError("Provider is Gemini but GOOGLE_API_KEY is missing")
+        
+        # [FIX] Explicit Safety Settings to prevent empty responses
+        safety_settings = {
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+        }
+
         return ChatGoogleGenerativeAI(
             model=settings.google_model,
             google_api_key=settings.google_api_key,
             temperature=0.7,
-            convert_system_message_to_human=True
+            # [FIX] Do not force convert system to human, let Gemini handle it naturally
+            # or handle it manually in the agent. Setting this to True often causes
+            # "User, User" consecutive message errors.
+            convert_system_message_to_human=False,
+            safety_settings=safety_settings
         )
 
     if provider == "openai":

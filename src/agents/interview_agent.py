@@ -153,28 +153,40 @@ class InterviewAgent:
             if "response_analysis" in analysis:
                 system_prompt += f"- Response style: {analysis['response_analysis'].get('analysis', '')}\n"
 
-        # Filter out empty messages and prepare for LLM
+        # Filter out empty messages
         valid_messages = [msg for msg in state["messages"] if msg.content.strip()]
         
-        # DEBUG: Log conversation length and last user message (can be disabled in production)
-        if os.getenv("DEBUG_MODE", "false").lower() == "true":
-            print(f"DEBUG: Generating question with {len(valid_messages)} messages in history")
-            if len(valid_messages) > 0:
-                last_msg = valid_messages[-1]
-                print(f"DEBUG: Last message type: {last_msg.type}, content preview: {last_msg.content[:80]}...")
+        # [FIX] Merge System Prompt into the first HumanMessage
+        # This prevents the "Consecutive User Messages" error in Gemini/VertexAI
+        # caused by [SystemMessage, HumanMessage, ...] converting to [User, User, ...]
+        final_messages = []
         
-        messages = [SystemMessage(content=system_prompt)] + valid_messages
+        if valid_messages and isinstance(valid_messages[0], HumanMessage):
+            # Clone the first message to avoid mutating state directly
+            first_msg_content = valid_messages[0].content
+            combined_content = f"{system_prompt}\n\n---\n\n{first_msg_content}"
+            
+            # Create a new merged message
+            merged_message = HumanMessage(content=combined_content)
+            
+            # Construct new list: [Merged First Msg, ... Rest of Msgs]
+            final_messages = [merged_message] + valid_messages[1:]
+        else:
+            # Fallback: Prepend SystemMessage if history is empty or starts with AI
+            final_messages = [SystemMessage(content=system_prompt)] + valid_messages
 
-        # Generate next question with reasoning capture
-        response = self.llm.invoke(messages)
+        # DEBUG: Log conversation length
+        if os.getenv("DEBUG_MODE", "false").lower() == "true":
+            print(f"DEBUG: Sending {len(final_messages)} messages to LLM")
+
+        # Generate next question
+        response = self.llm.invoke(final_messages)
         
-        # Extract reasoning content if available (Kimi K2 Thinking model)
+        # Extract reasoning content if available
         reasoning_content = None
         if hasattr(response, 'additional_kwargs'):
-            # Kimi K2 may include reasoning in additional_kwargs
             reasoning_content = response.additional_kwargs.get('reasoning_content', None)
         
-        # Store reasoning in metadata if available
         ai_message = AIMessage(content=response.content)
         if reasoning_content:
             ai_message.additional_kwargs = {'reasoning_content': reasoning_content}
