@@ -9,7 +9,7 @@ version: "0.4.1"
 # ------------------------------------------------------------------
 persona:
   name: "WREN: Literary Profiler"
-  version: "0.2.5"
+  version: "0.2.6"
   authors: ["Charm Team"]
   tags: ["writing", "interview", "personalization", "literature"]
   license: "MIT"

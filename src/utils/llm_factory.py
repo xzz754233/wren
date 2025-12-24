@@ -15,7 +15,7 @@ def get_llm(mode: Literal["interview", "profile"] = "interview") -> BaseChatMode
     
     print(f"🔌 LLM Factory initializing: Provider={provider}, Mode={mode}")
 
-    if provider == "gemini":
+    if provider in ["gemini", "google"]:
         if not settings.google_api_key:
             raise ValueError("Provider is Gemini but GOOGLE_API_KEY is missing")
         
