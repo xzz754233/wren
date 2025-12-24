@@ -220,14 +220,9 @@ class InterviewAgent:
         # Generate profile with higher token limit for JSON output
         summary_prompt = InterviewPrompts.get_summary_prompt(conversation)
         
-        # Use a fresh LLM instance with higher token limit for profile generation
-        profile_llm = ChatOpenAI(
-            model="kimi-k2-thinking",
-            api_key=self.llm.api_key,
-            base_url=self.llm.base_url,
-            temperature=0.7,
-            max_tokens=3000,  # More tokens for complete JSON profile
-        )
+        # [FIX] Use factory instead of manual instantiation to avoid attribute errors
+        # 原本的寫法會因為 ChatOpenAI 沒有 .api_key 屬性而崩潰
+        profile_llm = get_llm(mode="profile")
         
         messages = [SystemMessage(content=summary_prompt)]
         response = profile_llm.invoke(messages)
