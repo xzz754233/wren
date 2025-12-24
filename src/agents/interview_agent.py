@@ -119,9 +119,19 @@ class InterviewAgent:
 
     def _analyze_node(self, state: InterviewState) -> InterviewState:
         """Analyze current conversation state."""
+        
+        def normalize_role(msg_type):
+            if msg_type == "human": return "user"
+            if msg_type == "ai": return "assistant"
+            return msg_type
+
         conversation = [
-            {"role": msg.type, "content": msg.content} for msg in state["messages"]
+            {"role": normalize_role(msg.type), "content": msg.content} 
+            for msg in state["messages"]
         ]
+
+        # Analyze conversation progress
+        conv_analysis = self.conversation_analyzer._run(conversation)
 
         # Analyze conversation progress
         conv_analysis = self.conversation_analyzer._run(conversation)
